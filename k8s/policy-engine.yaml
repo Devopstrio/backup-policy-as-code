@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bpac-policy-engine
+  namespace: bpac-system
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: policy-engine
+  template:
+    metadata:
+      labels:
+        app: policy-engine
+    spec:
+      containers:
+      - name: engine
+        image: devopstrio/bpac-policy-engine:latest
+        env:
+        - name: POLICY_PACK_PATH
+          value: "/etc/bpac/packs"
+        volumeMounts:
+        - name: packs-volume
+          mountPath: /etc/bpac/packs
+      volumes:
+      - name: packs-volume
+        configMap:
+          name: bpac-global-packs
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bpac-engine-svc
+  namespace: bpac-system
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    app: policy-engine

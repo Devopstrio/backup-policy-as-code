@@ -1,0 +1,38 @@
+# 📈 BPac Compliance Metrics
+
+## Prometheus Alert Rules (BPAC-Rules.yml)
+
+```yaml
+groups:
+- name: BPAC-Compliance-Alerts
+  rules:
+  - alert: PolicyDriftDetected
+    expr: bpac_drift_event_count > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Unauthorized change detected in backup configuration"
+      description: "Resource {{ $labels.resource_id }} has drifted from Policy {{ $labels.policy_id }}"
+
+  - alert: ComplianceScoreDrops
+    expr: bpac_compliance_score < 0.95
+    for: 1h
+    labels:
+      severity: warning
+    annotations:
+      summary: "Global Compliance Score dropped below 95%"
+
+  - alert: ApprovalStalled
+    expr: bpac_pending_approval_duration_hours > 24
+    for: 1h
+    labels:
+      severity: info
+    annotations:
+      summary: "Policy Approval Pending for > 24h"
+```
+
+## Grafana Dashboard: Global Governance
+- **Compliance Heatmap**: Global view of 90+ regions.
+- **Drift Velocity**: Number of changes caught per day.
+- **Remediation Success**: Percentage of auto-heals without manual intervention.

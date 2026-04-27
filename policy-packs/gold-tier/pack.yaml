@@ -1,0 +1,29 @@
+version: "1.0.0"
+namespace: enterprise-global-backups
+policies:
+  - id: POL-AZ-SQL-PLATINUM
+    name: Azure SQL Mission-Critical (Gold)
+    rpo_minutes: 15
+    retention:
+      daily: 35
+      weekly: 4
+      monthly: 12
+      yearly: 10
+    immutability: true
+    encryption: AES-256-GCM
+    multi_region: true
+    auto_remediate: true
+    tags:
+      Environment: Production
+      DataClass: Highly-Confidential
+
+  - id: POL-AWS-EBS-STANDARD
+    name: AWS EBS Standard Retention
+    rpo_minutes: 1440
+    retention:
+      daily: 7
+      monthly: 1
+    immutability: false
+    encryption: AWS-KMS
+    tags:
+      Environment: Non-Prod

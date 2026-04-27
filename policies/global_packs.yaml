@@ -1,0 +1,18 @@
+policies:
+  - name: platinum-mission-critical
+    rpo_minutes: 15
+    encryption_required: true
+    immutability: true
+    retention:
+      daily: 35
+      monthly: 60
+      yearly: 10
+
+  - name: standard-dev-workload
+    rpo_minutes: 1440
+    encryption_required: false
+    immutability: false
+    retention:
+      daily: 7
+      monthly: 1
+      yearly: 0

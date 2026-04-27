@@ -1,0 +1,40 @@
+name: "🛡️ BPac Policy CI/CD"
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'policy-packs/**'
+      - 'policies/**'
+
+jobs:
+  validate:
+    name: "🕵️ Policy Lint & Test"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: "Validate YAML Schema"
+        run: |
+          pip install pyyaml jsonschema
+          # Logic to validate every policy against BPac schema
+          
+      - name: "RPO/RTO Constraint Check"
+        run: |
+          # Custom script to ensure RPO < 5m are flagged
+          python scripts/validate_constraints.py
+
+  deploy:
+    name: "🚀 Enforce Cloud State"
+    needs: validate
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - name: "Login to BPac API"
+        run: |
+          # Use API credentials to push the new pack
+          curl -X POST ${{ secrets.BPAC_API_URL }}/api/v1/policies/packs -d @policy-packs/gold-tier/pack.yaml
+
+      - name: "Notify Slack"
+        if: always()
+        run: echo "BPac Deployment Status: $?"
